@@ -94,4 +94,34 @@ const adminLogin = async (req, res) => {
   }
 };
 
-export { loginUser, registerUser, adminLogin };
+// Route for getting user details
+const getUserDetails = async (req, res) => {
+  try {
+    const userId = req.body.userId; 
+    
+    const user = await userModel.findById(userId).select("name email createdAt"); 
+    
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+
+    const joinDate = user.createdAt 
+        ? user.createdAt.toISOString().split('T')[0] 
+        : new Date(user._id.getTimestamp()).toISOString().split('T')[0];
+
+    res.json({ 
+      success: true, 
+      user: {
+        name: user.name,
+        email: user.email,
+        joined: joinDate 
+      }
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Failed to fetch user details" });
+  }
+};
+
+export { loginUser, registerUser, adminLogin, getUserDetails };

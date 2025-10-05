@@ -4,12 +4,12 @@ import {
   addProduct,
   removeProduct,
   singleProduct,
+  aiFilterProducts,
 } from "../controllers/productController.js";
 import upload from "../middleware/multer.js";
 import adminAuth from "../middleware/adminAuth.js";
 
 const productRouter = express.Router();
-
 productRouter.post(
   "/add",
   adminAuth,
@@ -24,5 +24,6 @@ productRouter.post(
 productRouter.post("/remove",adminAuth, removeProduct);
 productRouter.post("/single", singleProduct);
 productRouter.get("/list", listProducts);
+productRouter.post("/ai-filter", aiFilterProducts);
 
 export default productRouter;

@@ -91,4 +91,56 @@ const singleProduct = async (req, res) => {
   }
 };
 
-export { listProducts, addProduct, removeProduct, singleProduct };
+const aiFilterProducts = async (req, res) => {
+    const { query } = req.body; // e.g., "I need a jacket under 5000"
+
+    // 1. Define the system's role (the key to reliable AI results)
+    const systemInstruction = `You are a product filter expert for an e-commerce store. 
+    Analyze the user's clothing budget query and return ONLY a single JSON object. 
+    The JSON must contain 'priceMin', 'priceMax' (in Indian Rupees), and 'category' (e.g., 'Jacket', 'T-Shirt', or 'All'). 
+    If a maximum budget is mentioned (e.g., under 5000), set priceMax to 5000 and priceMin to 0.`;
+    
+    try {
+        // Conceptual call to the AI Model
+        /*
+        const response = await aiService.generateContent({
+            prompt: query,
+            systemInstruction: systemInstruction,
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: "object",
+                    properties: {
+                        priceMin: { type: "number" },
+                        priceMax: { type: "number" },
+                        category: { type: "string" }
+                    }
+                }
+            }
+        });
+        const filterCriteria = JSON.parse(response.text);
+        
+        // 2. Filter products based on AI criteria (using existing logic)
+        const allProducts = await productModel.find({}); // Fetch all products 
+        
+        const filteredProducts = allProducts.filter(p => {
+            const priceMatch = p.price >= filterCriteria.priceMin && p.price <= filterCriteria.priceMax;
+            const categoryMatch = filterCriteria.category === 'All' || p.category === filterCriteria.category;
+            return priceMatch && categoryMatch;
+        });
+
+        res.json({ success: true, products: filteredProducts });
+        */
+
+        // --- TEMPORARY MOCK RESPONSE FOR TESTING ---
+        const mockFilter = { priceMin: 0, priceMax: 5000, category: 'Jacket' };
+        // You would replace this mock logic with the actual database filter logic above
+        // For now, return the mock criteria:
+        res.json({ success: true, filterCriteria: mockFilter, message: "Use this criteria to filter the products list on the frontend." });
+        
+    } catch (error) {
+        console.error("AI Filtering Error:", error);
+        res.json({ success: false, message: "AI processing failed. Please try again." });
+    }
+};
+export { listProducts, addProduct, removeProduct, singleProduct, aiFilterProducts };
